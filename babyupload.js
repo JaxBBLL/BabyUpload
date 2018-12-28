@@ -6,7 +6,6 @@
  * Copyright 2018-2019 JaxBBLL
  * Released under the MIT license
  */
-
 ;
 (function(global, factory) {
   if (typeof define === 'function' && define.amd) {
