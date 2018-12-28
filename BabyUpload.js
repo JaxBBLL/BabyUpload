@@ -69,6 +69,7 @@
     eInput.style.display = 'none'
     document.body.appendChild(eInput)
     el.addEventListener('click', function(ev) {
+      eInput.value = ''; // 修复图片移除后，添加同张图片不成功的问题
       eInput.click();
     }, false)
 

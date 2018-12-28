@@ -1,3 +1,14 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [BabyUpload](#babyupload)
+  - [创建实例对象](#%E5%88%9B%E5%BB%BA%E5%AE%9E%E4%BE%8B%E5%AF%B9%E8%B1%A1)
+  - [实例方法 - upload](#%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95---upload)
+  - [实例方法 - remove(index)](#%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95---removeindex)
+  - [example](#example)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # BabyUpload
 
 这是一个使用FormData上传文件的小插件
