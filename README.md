@@ -34,8 +34,9 @@ options是一个对象，参数如下
   withCredentials: false, // 支持发送 cookie 凭证信息，默认false
   success: function(res) {}, // http成功, res是个数组，返回多个上传的结果
   error: function(err) {}, // http失败
-  change: function(selectFiles, allfiles) {}, // 选择文件的回调，selectFiles当前操作选中的文件，allfiles是所有选择的文件
-  beforeUpload: function(files) {} //发送之前的回调
+  // 选择文件的回调，selectFiles当前操作选中的文件，allfiles是所有选择的文件
+  change: function(selectFiles, allfiles) {}, 
+  beforeUpload: function(files) {} //发送之前的回调，files是所有选择的文件
 }
 ```
 ## 实例方法 - upload
