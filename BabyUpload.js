@@ -8,16 +8,11 @@
  */
 ;
 (function(global, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(function() {
-      return factory(global);
-    });
-  } else if (typeof module === 'object' && module.exports) {
-    module.exports = factory(global);
-  } else {
-    global.BabyUpload = factory(global);
-  }
-}(typeof window !== 'undefined' ? window : this, function(window) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+    typeof define === 'function' && define.amd ? define(factory) :
+    (global.BabyUpload = factory());
+}(this, function() {
+  'use strict';
 
   function merge(target) {
     for (var i = 1, j = arguments.length; i < j; i++) {
@@ -34,15 +29,19 @@
     return target;
   };
 
+  var noop = function() {};
+
   var defaults = {
     isChangeUpload: true, // 选择后是否立即上传
     name: 'file', // 上传的文件字段名
+    multiple: false, // 是否多张
     data: {}, // 额外的参数
+    accept: '', // 接受上传的文件类型
     withCredentials: false, // 支持发送 cookie 凭证信息
-    success: function() {}, // http成功
-    error: function() {}, // http失败
-    change: function() {},
-    beforeUpload: function() {}
+    change: noop,
+    beforeUpload: noop,
+    success: noop, // http成功
+    error: noop // http失败
   }
 
   function Upload(options) {
@@ -52,7 +51,7 @@
     options = merge(defaults, options);
     var _this = this;
 
-    this.el = typeof options.el === 'string' ?
+    var el = typeof options.el === 'string' ?
       document.querySelector(options.el) : options.el;
     this.options = options;
     this.files = [];
@@ -61,16 +60,26 @@
     var eInput = document.createElement('input');
     eInput.setAttribute('type', 'file');
     eInput.setAttribute('name', 'file');
+    if (this.options.multiple) {
+      eInput.setAttribute('multiple', 'multiple');
+    }
+    if (this.options.accept) {
+      eInput.setAttribute('accept', this.options.accept);
+    }
     eInput.style.display = 'none'
     document.body.appendChild(eInput)
-    this.el.addEventListener('click', function(ev) {
+    el.addEventListener('click', function(ev) {
       eInput.click();
     }, false)
 
     eInput.addEventListener('change', function(ev) {
       var file = this.files[0];
-      _this.files = [file]
-      _this.options.change(file)
+      if (_this.options.multiple) {
+        _this.files.push(file)
+      } else {
+        _this.files = [file]
+      }
+      _this.options.change(file, _this.files)
       if (_this.options.isChangeUpload) {
         _this.upload();
       }
@@ -85,7 +94,9 @@
     if (!this.files.length) {
       return false;
     }
-    this.formData.append(this.options.name, this.files[0]);
+    for (var i = 0; i < this.files.length; i++) {
+      this.formData.append(this.options.name, this.files[i]);
+    }
     for (var k in this.options.data) {
       this.formData.append(k, this.options.data[k])
     }
@@ -105,8 +116,12 @@
     this.formData = new FormData();
     this.files = []
   }
-  Upload.prototype.remove = function() {
-    this.files = [];
+  Upload.prototype.remove = function(index) {
+    if (!this.files.length) {
+      return;
+    }
+    index = this.options.multiple ? index : 0;
+    this.files.splice(index, 1);
   }
 
   function toJson(string) {
