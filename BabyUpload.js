@@ -3,7 +3,7 @@
  * Version 1.0.0
  * https://github.com/JaxBBLL/BabyUpload
  *
- * Copyright 2018-2019 JaxBBLL
+ * Copyright (c) 2018-present JaxBBLL
  * Released under the MIT license
  */
 ;
@@ -32,10 +32,11 @@
   var noop = function() {};
 
   var defaults = {
-    isChangeUpload: true, // 选择后是否立即上传
+    isChangeUpload: false, // 选择后是否立即上传
     name: 'file', // 上传的文件字段名
     multiple: false, // 是否多张
-    data: {}, // 额外的参数
+    data: {}, // 额外的参数,
+    method: 'POST', // ajax上传的类型
     accept: '', // 接受上传的文件类型
     withCredentials: false, // 支持发送 cookie 凭证信息
     change: noop,
@@ -89,6 +90,7 @@
 
   Upload.prototype.upload = function() {
     var url = this.options.url;
+    var method = this.options.method;
     var cb = this.options.success;
     var ecb = this.options.error;
     this.options.beforeUpload(this.files);
@@ -102,7 +104,7 @@
       this.formData.append(k, this.options.data[k])
     }
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', url, true);
+    xhr.open(method, url, true);
     xhr.withCredentials = this.options.withCredentials;
     xhr.onreadystatechange = function() {
       if (this.status == 200) {
@@ -121,7 +123,7 @@
     if (!this.files.length) {
       return;
     }
-    index = this.options.multiple ? index : 0;
+    index = index === undefined ? 0 : index;
     this.files.splice(index, 1);
   }
 
@@ -129,7 +131,7 @@
     try {
       return JSON.parse(string)
     } catch (e) {
-      return string
+      return { data: string }
     }
   }
 
