@@ -28,12 +28,13 @@ options是一个对象，参数如下
   isChangeUpload: false, // 选择后是否立即上传，默认false
   name: 'file', // 上传的文件字段名，默认file
   data: {}, // 额外的参数
-  multiple: false, // 是否多张，默认file
+  multiple: false, // 是否多个，默认false
+  method: 'POST', // ajax上传的类型
   accept: '', // 接受上传的文件类型
-  withCredentials: false, // 支持发送 cookie 凭证信息，默认file
-  success: function(res) {}, // http成功
+  withCredentials: false, // 支持发送 cookie 凭证信息，默认false
+  success: function(res) {}, // http成功, res是个数组，返回多个上传的结果
   error: function(err) {}, // http失败
-  change: function(file, files) {}, // 选择文件的回调
+  change: function(selectFiles, allfiles) {}, // 选择文件的回调，selectFiles当前操作选中的文件，allfiles是所有选择的文件
   beforeUpload: function(files) {} //发送之前的回调
 }
 ```
@@ -49,8 +50,6 @@ var instance = BabyUpload({
   name: 'file',
   success: function(res) {}, // http成功
   error: function(err) {}, // http失败
-  change: function(file, files) {}, // 选择文件的回调
-  beforeUpload: function(files) {} //发送之前的回调
 })
 
 $('#submit').click(function(ev) {
@@ -80,21 +79,19 @@ $('#btn').click(function(ev) {
 var upload = BabyUpload({
   el: '.img',
   url: '/api/v1/admin/common/file/upload',
-  isChangeUpload: false,
   accept: 'image/gif, image/jpeg, image/png',
+  multiple: false,
   success: function(res) {
     console.log('success', res)
   },
   error: function(res) {
     console.log('error', res)
   },
-  change: function(file, files) {
-    console.log('change', file, files)
-    var path = URL.createObjectURL(file);
+  change: function(selectFiles, allfiles) {
+    var path = URL.createObjectURL(selectFiles[0]);
     $('.img').attr('src', path)
   },
   beforeUpload: function(files) {
-    // console.log('beforeUpload', files)
   }
 })
 

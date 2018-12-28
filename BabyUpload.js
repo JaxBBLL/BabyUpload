@@ -56,7 +56,6 @@
       document.querySelector(options.el) : options.el;
     this.options = options;
     this.files = [];
-    this.formData = new FormData();
 
     var eInput = document.createElement('input');
     eInput.setAttribute('type', 'file');
@@ -75,13 +74,13 @@
     }, false)
 
     eInput.addEventListener('change', function(ev) {
-      var file = this.files[0];
+      var selectFiles = Array.prototype.slice.call(this.files)
       if (_this.options.multiple) {
-        _this.files.push(file)
+        _this.files = _this.files.concat(selectFiles)
       } else {
-        _this.files = [file]
+        _this.files = selectFiles
       }
-      _this.options.change(file, _this.files)
+      _this.options.change(selectFiles, _this.files)
       if (_this.options.isChangeUpload) {
         _this.upload();
       }
@@ -89,34 +88,44 @@
   }
 
   Upload.prototype.upload = function() {
-    var url = this.options.url;
-    var method = this.options.method;
-    var cb = this.options.success;
-    var ecb = this.options.error;
     this.options.beforeUpload(this.files);
     if (!this.files.length) {
       return false;
     }
-    for (var i = 0; i < this.files.length; i++) {
-      this.formData.append(this.options.name, this.files[i]);
-    }
-    for (var k in this.options.data) {
-      this.formData.append(k, this.options.data[k])
-    }
-    var xhr = new XMLHttpRequest();
-    xhr.open(method, url, true);
-    xhr.withCredentials = this.options.withCredentials;
-    xhr.onreadystatechange = function() {
-      if (this.status == 200) {
-        if (this.readyState == 4) {
-          cb && cb(toJson(this.responseText))
+
+    var url = this.options.url;
+    var method = this.options.method;
+    var cb = this.options.success;
+    var ecb = this.options.error;
+    var _this = this;
+    var resultArr = [];
+    for (var i = 0, size = this.files.length; i < this.files.length; i++) {
+      var file = this.files[i];
+      (function(file) {
+        var formData = new FormData();
+        formData.append(_this.options.name, _this.files[i]);
+        for (var k in _this.options.data) {
+          formData.append(k, _this.options.data[k])
         }
-      } else {
-        ecb && ecb(toJson(this.responseText))
-      }
-    };
-    xhr.send(this.formData);
-    this.formData = new FormData();
+        var xhr = new XMLHttpRequest();
+        xhr.open(method, url, true);
+        xhr.withCredentials = _this.options.withCredentials;
+        xhr.onreadystatechange = function() {
+          if (this.status == 200) {
+            if (this.readyState == 4) {
+              size -= 1;
+              resultArr.push(toJson(this.responseText))
+              if (size === 0) {
+                cb && cb(resultArr)
+              }
+            }
+          } else {
+            ecb && ecb(toJson(this.responseText))
+          }
+        };
+        xhr.send(formData);
+      }(file));
+    }
     this.files = []
   }
   Upload.prototype.remove = function(index) {
@@ -124,6 +133,7 @@
       return;
     }
     index = index === undefined ? 0 : index;
+    console.log(this.files)
     this.files.splice(index, 1);
   }
 

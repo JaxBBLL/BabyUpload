@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script src="BabyUpload.js"></script>
+  <style>
+  .img {
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+  }
+  </style>
+</head>
+
+<body>
+  <div class="img-wrap">
+    <img src="" class="img">
+    <button id="remove">移除</button>
+  </div>
+  <button id="submit">upload</button>
+  <script>
+  var upload = BabyUpload({
+    el: '.img',
+    url: '/api/v1/admin/common/file/upload',
+    accept: 'image/gif, image/jpeg, image/png',
+    multiple: false,
+    success: function(res) {
+      console.log('success', res)
+    },
+    error: function(res) {
+      console.log('error', res)
+    },
+    change: function(selectFiles, allfiles) {
+      var path = URL.createObjectURL(selectFiles[0]);
+      $('.img').attr('src', path)
+    },
+    beforeUpload: function(files) {}
+  })
+
+  $('#submit').click(function(ev) {
+    upload.upload();
+  })
+
+  $('#remove').click(function(ev) {
+    upload.remove(0);
+    $('.img').attr('src', '')
+  })
+  </script>
+</body>
+
+</html>
