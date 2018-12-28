@@ -1,0 +1,32 @@
+{
+  "name": "babyupload",
+  "version": "1.0.0",
+  "description": "upload",
+  "main": "BabyUpload.js",
+  "scripts": {
+    "test": "gulp test",
+    "build": "gulp build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JaxBBLL/BabyUpload.git"
+  },
+  "keywords": [
+    "upload"
+  ],
+  "author": "JaxBBLL",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JaxBBLL/BabyUpload/issues"
+  },
+  "homepage": "https://github.com/JaxBBLL/BabyUpload#readme",
+  "devDependencies": {
+    "del": "^3.0.0",
+    "gulp": "^4.0.0",
+    "gulp-connect": "^5.7.0",
+    "gulp-plumber": "^1.2.1",
+    "gulp-rename": "^1.4.0",
+    "gulp-uglify": "^3.0.1",
+    "http-proxy-middleware": "^0.19.1"
+  }
+}
