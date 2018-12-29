@@ -31,24 +31,25 @@
 
   var noop = function() {};
 
-  var defaults = {
-    isChangeUpload: false, // 选择后是否立即上传
-    name: 'file', // 上传的文件字段名
-    multiple: false, // 是否多张
-    data: {}, // 额外的参数,
-    method: 'POST', // ajax上传的类型
-    accept: '', // 接受上传的文件类型
-    withCredentials: false, // 支持发送 cookie 凭证信息
-    change: noop,
-    beforeUpload: noop,
-    success: noop, // http成功
-    error: noop // http失败
-  }
 
   function Upload(options) {
     if (!(this instanceof Upload)) {
       return new Upload(options);
     }
+    var defaults = {
+      isChangeUpload: false, // 选择后是否立即上传
+      name: 'file', // 上传的文件字段名
+      multiple: false, // 是否多张
+      data: {}, // 额外的参数,
+      method: 'POST', // ajax上传的类型
+      accept: '', // 接受上传的文件类型
+      withCredentials: false, // 支持发送 cookie 凭证信息
+      change: noop,
+      beforeUpload: noop,
+      success: noop, // http成功
+      error: noop // http失败
+    }
+
     options = merge(defaults, options);
     var _this = this;
 

@@ -12,26 +12,30 @@
     width: 100px;
     height: 100px;
     cursor: pointer;
+    border: 1px dashed #ccc;
+  }
+  
+  .upload-wrap img {
+    border: none;
   }
   </style>
 </head>
 
 <body>
   <h2>单张上传</h2>
-  <div class="img-wrap">
-    <img src="" class="img" id="img1">
+  <div class="upload-wrap">
+    <img src="" class="img" id="upload1">
     <button id="remove1">移除</button>
+    <button id="submit1">上传</button>
   </div>
-  <button id="submit1">upload</button>
+  <hr>
   <h2>多张上传</h2>
-  <div class="img-wrap">
-    <img src="" class="img" id="img2">
-    <button id="remove2">移除</button>
-  </div>
-  <button id="submit2">upload</button>
+  <div class="upload-wrap" id="multiple-wrap"></div>
+  <button id="upload2">选择文件</button>
+  <button id="submit2">上传</button>
   <script>
-  var upload1 = BabyUpload({
-    el: '#img1',
+  var upload1 = new BabyUpload({
+    el: '#upload1',
     url: '/api/v1/admin/common/file/upload',
     accept: 'image/gif, image/jpeg, image/png',
     multiple: false,
@@ -40,7 +44,7 @@
     },
     change: function(selectFiles, allfiles) {
       var path = URL.createObjectURL(selectFiles[0]);
-      $('#img1').attr('src', path)
+      $('#upload1').attr('src', path)
     },
     beforeUpload: function(files) {}
   })
@@ -51,12 +55,12 @@
 
   $('#remove1').click(function(ev) {
     upload1.remove(0);
-    $('#img1').attr('src', '')
+    $('#upload1').attr('src', '')
   })
 
 
-  var upload2 = BabyUpload({
-    el: '#img2',
+  var upload2 = new BabyUpload({
+    el: '#upload2',
     url: '/api/v1/admin/common/file/upload',
     accept: 'image/gif, image/jpeg, image/png',
     multiple: true,
@@ -64,19 +68,18 @@
       console.log('success', res)
     },
     change: function(selectFiles, allfiles) {
-      var path = URL.createObjectURL(selectFiles[0]);
-      $('#img2').attr('src', path)
+      var html = '';
+      allfiles.forEach(item => {
+        var path = URL.createObjectURL(item);
+        html += '<img src="' + path + '" class="img">'
+      })
+      $('#multiple-wrap').html(html)
     },
     beforeUpload: function(files) {}
   })
 
   $('#submit2').click(function(ev) {
     upload2.upload();
-  })
-
-  $('#remove2').click(function(ev) {
-    upload2.remove(0);
-    $('#img2').attr('src', '')
   })
   </script>
 </body>
