@@ -70,39 +70,35 @@ $('#btn').click(function(ev) {
 ## example
 
 ```html
-<p>
-  <img src="" class="img">
-  <button id="remove">移除</button>
-</p>
-<button id="submit">upload</button>
+<div class="upload-wrap">
+  <img src="" class="img" id="upload1">
+  <button id="remove1">移除</button>
+  <button id="submit1">上传</button>
+</div>
 ```
 ```js
-var upload = BabyUpload({
-  el: '.img',
+var upload1 = new BabyUpload({
+  el: '#upload1',
   url: '/api/v1/admin/common/file/upload',
   accept: 'image/gif, image/jpeg, image/png',
   multiple: false,
   success: function(res) {
     console.log('success', res)
   },
-  error: function(res) {
-    console.log('error', res)
-  },
   change: function(selectFiles, allfiles) {
     var path = URL.createObjectURL(selectFiles[0]);
-    $('.img').attr('src', path)
+    $('#upload1').attr('src', path)
   },
-  beforeUpload: function(files) {
-  }
+  beforeUpload: function(files) {}
 })
 
-$('#submit').click(function(ev) {
-  upload.upload();
+$('#submit1').click(function(ev) {
+  upload1.upload();
 })
 
-$('#remove').click(function(ev) {
-  upload.remove(0);
-  $('.img').attr('src', '')
+$('#remove1').click(function(ev) {
+  upload1.remove(0);
+  $('#upload1').attr('src', '')
 })
 ```
 

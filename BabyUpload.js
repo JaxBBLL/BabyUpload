@@ -134,7 +134,6 @@
       return;
     }
     index = index === undefined ? 0 : index;
-    console.log(this.files)
     this.files.splice(index, 1);
   }
 
