@@ -15,7 +15,7 @@
 
 ## 预览
 
-![image](https://github.com/JaxBBLL/BabyUpload/preview.gif)
+![image](https://github.com/JaxBBLL/BabyUpload/blob/master/preview.gif)
 
 ## 创建实例对象
 ```js
