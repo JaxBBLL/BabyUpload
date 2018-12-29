@@ -31,7 +31,6 @@
 
   var noop = function() {};
 
-
   function Upload(options) {
     if (!(this instanceof Upload)) {
       return new Upload(options);
@@ -50,22 +49,22 @@
       error: noop // http失败
     }
 
-    options = merge(defaults, options);
+    var _opts = merge(defaults, options);
     var _this = this;
 
-    var el = typeof options.el === 'string' ?
-      document.querySelector(options.el) : options.el;
-    this.options = options;
+    var el = typeof _opts.el === 'string' ?
+      document.querySelector(_opts.el) : _opts.el;
+    this._opts = _opts;
     this.files = [];
 
     var eInput = document.createElement('input');
     eInput.setAttribute('type', 'file');
     eInput.setAttribute('name', 'file');
-    if (this.options.multiple) {
+    if (this._opts.multiple) {
       eInput.setAttribute('multiple', 'multiple');
     }
-    if (this.options.accept) {
-      eInput.setAttribute('accept', this.options.accept);
+    if (this._opts.accept) {
+      eInput.setAttribute('accept', this._opts.accept);
     }
     eInput.style.display = 'none'
     document.body.appendChild(eInput)
@@ -76,41 +75,41 @@
 
     eInput.addEventListener('change', function(ev) {
       var selectFiles = Array.prototype.slice.call(this.files)
-      if (_this.options.multiple) {
+      if (_this._opts.multiple) {
         _this.files = _this.files.concat(selectFiles)
       } else {
         _this.files = selectFiles
       }
-      _this.options.change(selectFiles, _this.files)
-      if (_this.options.isChangeUpload) {
+      _this._opts.change(selectFiles, _this.files)
+      if (_this._opts.isChangeUpload) {
         _this.upload();
       }
     }, false)
   }
 
   Upload.prototype.upload = function() {
-    this.options.beforeUpload(this.files);
+    this._opts.beforeUpload(this.files);
     if (!this.files.length) {
       return false;
     }
 
-    var url = this.options.url;
-    var method = this.options.method;
-    var cb = this.options.success;
-    var ecb = this.options.error;
+    var url = this._opts.url;
+    var method = this._opts.method;
+    var cb = this._opts.success;
+    var ecb = this._opts.error;
     var _this = this;
     var resultArr = [];
     for (var i = 0, size = this.files.length; i < this.files.length; i++) {
       var file = this.files[i];
       (function(file) {
         var formData = new FormData();
-        formData.append(_this.options.name, _this.files[i]);
-        for (var k in _this.options.data) {
-          formData.append(k, _this.options.data[k])
+        formData.append(_this._opts.name, _this.files[i]);
+        for (var k in _this._opts.data) {
+          formData.append(k, _this._opts.data[k])
         }
         var xhr = new XMLHttpRequest();
         xhr.open(method, url, true);
-        xhr.withCredentials = _this.options.withCredentials;
+        xhr.withCredentials = _this._opts.withCredentials;
         xhr.onreadystatechange = function() {
           if (this.status == 200) {
             if (this.readyState == 4) {

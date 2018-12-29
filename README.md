@@ -13,6 +13,10 @@
 
 这是一个使用FormData上传文件的小插件，支持IE10+
 
+## 预览
+
+![image](https://github.com/JaxBBLL/BabyUpload/preview.gif)
+
 ## 创建实例对象
 ```js
 var instance = new BabyUpload(options)
@@ -28,7 +32,7 @@ options是一个对象，参数如下
   isChangeUpload: false, // 选择后是否立即上传，默认false
   name: 'file', // 上传的文件字段名，默认file
   data: {}, // 额外的参数
-  multiple: false, // 是否多个，默认false
+  multiple: false, // 是否多个，默认false，多个上传为ajax队列上传
   method: 'POST', // ajax上传的类型
   accept: '', // 接受上传的文件类型
   withCredentials: false, // 支持发送 cookie 凭证信息，默认false

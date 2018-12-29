@@ -10,8 +10,8 @@
   <script src="BabyUpload.js"></script>
   <style>
   .img {
-    width: 100px;
-    height: 100px;
+    width: 60px;
+    height: 60px;
     margin-right: 10px;
   }
   
@@ -20,6 +20,12 @@
   }
   .upload-wrap {
     padding: 10px 0;
+  }
+  .upload-item {
+    display: inline-block;
+  }
+  .upload-item img {
+    display: block;
   }
   </style>
 </head>
@@ -90,7 +96,7 @@
       var html = '';
       allfiles.forEach(item => {
         var path = URL.createObjectURL(item);
-        html += '<img src="' + path + '" class="img-rounded img">'
+        html += '<p class="upload-item"><img src="' + path + '" class="img-rounded img"><button class="btn btn-danger btn-xs removeBtn"><span class="glyphicon glyphicon-trash"></span></button></p>'
       })
       $('#multiple-wrap').html(html)
     },
@@ -99,6 +105,13 @@
 
   $('#submit2').click(function(ev) {
     upload2.upload();
+  })
+
+  $('.upload-wrap').on('click', '.removeBtn', function(ev) {
+    var $el = $(this).parent()
+    var i = $el.index()
+    upload2.remove(i);
+    $el.remove();
   })
   </script>
 </body>
