@@ -91,13 +91,15 @@
             maxWidth: _this._opts.maxWidth,
             maxHeight: _this._opts.maxHeight
           }, function(newFile) {
+            console.log(newFile)
             newFiles.push(newFile)
           })
         }
         _this.files = newFiles;
         // 压缩end
+        console.log(_this.files)
       }
-      console.log(_this.files)
+      // 压缩是异步的，这里立即上传可能有问题
       _this._opts.change(selectFiles, _this.files)
       if (_this._opts.isChangeUpload) {
         _this.upload();
