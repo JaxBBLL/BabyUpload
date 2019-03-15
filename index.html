@@ -18,12 +18,15 @@
   .pointer {
     cursor: pointer;
   }
+  
   .upload-wrap {
     padding: 10px 0;
   }
+  
   .upload-item {
     display: inline-block;
   }
+  
   .upload-item img {
     display: block;
   }
@@ -64,6 +67,9 @@
     url: '/api/v1/admin/common/file/upload',
     accept: 'image/gif, image/jpeg, image/png',
     multiple: false,
+    isCompress: true, //是否压缩
+    maxWidth: 500, //isCompress:true才起作用
+    maxHeight: 500, //isCompress:true才起作用
     success: function(res) {
       console.log('success', res)
     },
