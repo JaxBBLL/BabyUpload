@@ -52,7 +52,7 @@
       error: noop // http失败
     }
 
-    var _opts = merge(defaults, options);
+    var _opts = merge({}, defaults, options);
     var _this = this;
 
     var el = typeof _opts.el === 'string' ?
