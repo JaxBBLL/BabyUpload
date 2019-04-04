@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+  <title>前端图片压缩上传</title>
+</head>
+
+<body>
+  <form id="form">
+    <input type="file" id="file" />
+  </form>
+</body>
+<script>
+$.post('/api/v1/admin/login', {
+  userName: 'zjadmin', //  zjadmin
+  password: '123456', //  123456
+  captcha: '12345',
+  rememberMe: false
+}, function(res) {
+  console.log(res)
+})
+</script>
+<script>
+if (!HTMLCanvasElement.prototype.toBlob) {
+  Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
+    value: function(callback, type, quality) {
+      var binStr = atob(this.toDataURL(type, quality).split(',')[1]),
+        len = binStr.length,
+        arr = new Uint8Array(len);
+      for (var i = 0; i < len; i++) {
+        arr[i] = binStr.charCodeAt(i);
+      }
+      callback(new Blob([arr], {
+        type: type || 'image/png'
+      }));
+    }
+  });
+}
+
+function readerImg(file, callback) {
+  // 1.读取文件详细信息
+  // 2.使用FileReader读取文件信息
+  var reader = new FileReader();
+  // 4.监听读取文件过程方法,异步过程
+  reader.onloadstart = function(e) {
+    console.log("开始读取....");
+  };
+  reader.onprogress = function(e) {
+    console.log("正在读取中....");
+  };
+  reader.onabort = function(e) {
+    console.log("中断读取....");
+  };
+  reader.onerror = function(e) {
+    console.log("读取异常....");
+  };
+  reader.onload = function(e) {
+    console.log("成功读取....");
+    var img = document.createElement("img");
+    // 将解析的base64字符串赋值给img标签
+    img.onload = function() {
+      callback(img);
+    };
+    img.src = e.target.result;
+  };
+  //3 开始读取
+  reader.readAsDataURL(file);
+}
+
+document.getElementById("file").onchange = function(e) {
+  var file = e.target.files[0]; // IE10+
+  readerImg(file, function(img) {
+    console.log(img.width, img.height);
+    // 缩放图片需要的canvas
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+    // 图片原始尺寸
+    var originWidth = img.width;
+    var originHeight = img.height;
+    // 最大尺寸限制
+    var maxWidth = 400,
+      maxHeight = 400;
+    // 目标尺寸
+    var targetWidth = originWidth,
+      targetHeight = originHeight;
+    // 图片尺寸超过400x400的限制
+    if (originWidth > maxWidth || originHeight > maxHeight) {
+      if (originWidth / originHeight > maxWidth / maxHeight) {
+        // 更宽，按照宽度限定尺寸
+        targetWidth = maxWidth;
+        targetHeight = Math.round(maxWidth * (originHeight / originWidth));
+      } else {
+        targetHeight = maxHeight;
+        targetWidth = Math.round(maxHeight * (originWidth / originHeight));
+      }
+    }
+    // canvas对图片进行缩放
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+    // 清除画布
+    context.clearRect(0, 0, targetWidth, targetHeight);
+    // 图片压缩
+    context.drawImage(img, 0, 0, targetWidth, targetHeight);
+    // canvas转为blob并上传
+    canvas.toBlob(function(blob) {
+      upload('/api/v1/admin/common/file/upload', blob)
+    }, file.type || 'image/jpeg');
+  });
+};
+
+function upload(url, file) {
+  var formData = new FormData();
+  formData.append('file', file, +new Date() + '.jpg'); // 需添加第三个参数filename
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', url, true);
+  xhr.withCredentials = true;
+  xhr.onreadystatechange = function() {
+    if (this.status == 200) {
+      if (this.readyState == 4) {
+        console.log(JSON.parse(xhr.responseText))
+      }
+    } else {
+
+    }
+  };
+  xhr.send(formData);
+}
+</script>
+
+</html>

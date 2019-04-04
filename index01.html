@@ -74,6 +74,7 @@
       </div>
       <div class="footer">
         <button class="btn btn-default" type="button" data-action="cancel">取消</button>
+        <button class="btn btn-primary" type="button" data-action="cropper">确定裁剪</button>
         <button class="btn btn-primary" type="button" data-action="upload">确定上传</button>
       </div>
     </div>
@@ -90,11 +91,12 @@
     var baseHeight;
     var $image = $('body').find('.m-copper-wrap .photo');
     var options = {        
-      // aspectRatio: 1, // 纵横比
+      aspectRatio: 1, // 纵横比
       viewMode: 2
     };
     var _opts = $.extend({}, {
-      uploadSuccess: $.noop
+      uploadSuccess: $.noop,
+      cropSuccess: $.noop
     }, opts)
     $image.cropper(options);     
     var $inputImage = input;      
@@ -127,23 +129,64 @@
     } else {        
       $inputImage.prop('disabled', true).addClass('disabled');      
     }
+
+
+    $('body').on('click', '[data-action="cropper"]', function() {
+      var base64 = getBase64()
+      var file = dataURLtoFile(base64)
+      _opts.cropSuccess(base64, file)
+      $('.m-copper-wrap').hide();
+    })
+
     $('body').on('click', '[data-action="upload"]', function() {
-      var result = $image.cropper('getCroppedCanvas', {        
-        width: Math.min(300, baseWidth), // 裁剪后的长宽
-        height: Math.min(300, baseHeight)     
-      })
-      var data = {
-        file: result.toDataURL('image/jpeg', 0.3)
-      };
-      $.post('/api/v1/admin/common/file/upload', data, function(ret) {
-        console.log(ret)
-        $('.m-copper-wrap').hide();
-      }, 'text');
+      var file = dataURLtoFile(getBase64())
+      sendImg(file)
     })
 
     $('body').on('click', '[data-action="cancel"]', function() {
       $('.m-copper-wrap').hide();
     })
+
+    function getBase64() {
+      var result = $image.cropper('getCroppedCanvas', {        
+        width: Math.min(500, baseWidth), // 裁剪后的长宽
+        height: Math.min(500, baseHeight)     
+      })
+      return result.toDataURL('image/jpeg', 0.3); //转为base64
+    }
+
+    function dataURLtoFile(dataurl) { //将base64转换为文件
+      var arr = dataurl.split(','),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], +new Date() + '.jpg', {
+        type: mime
+      });
+    }
+
+    function sendImg(file, cb) {
+      var formData = new FormData();
+      formData.append('file', file);
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/v1/admin/common/file/upload', true);
+      xhr.withCredentials = true;
+      xhr.onreadystatechange = function() {
+        if (this.status == 200) {
+          if (this.readyState == 4) {
+            _opts.uploadSuccess(JSON.parse(xhr.responseText));
+            $('.m-copper-wrap').hide();
+          }
+        } else {
+
+        }
+      };
+      xhr.send(formData);
+    };
   }
   </script>
   <script>
@@ -158,6 +201,9 @@
   $.cropperInit($('#input'), {
     uploadSuccess: function(res) {
       console.log(res)
+    },
+    cropSuccess: function(img, file) {
+      console.log(img, file)
     }
   });
   </script>

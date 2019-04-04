@@ -11,7 +11,7 @@ const paths = {
   dest: './'
 };
 
-const port = 9999;
+const port = 3333;
 
 function scriptBuild() {
   return gulp.src('./BabyUpload.js')
