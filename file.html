@@ -68,14 +68,58 @@
     reader.readAsDataURL(file);
   }
 
-  function fileChange(e, options) {
-    var maxWidth = options.maxWidth;
-    var maxHeight = options.maxHeight;
-    var url = options.url;
-    var extraParameter = options.extraParameter;
+  function MyUploader(options) {
+    if (!(this instanceof MyUploader)) {
+      return new MyUploader(options);
+    }
+    var defaults = {
+      url: '', // 上传url
+      maxWidth: 400, // 最大尺寸限制
+      maxHeight: 400, // 最大尺寸限制
+      extraParameter: {}, //额外的参数
+      successHandler: function() {},
+      errorHandler: function() {},
+      selectHandler: function(blob) {}
+    }
+    var opts = merge({}, defaults, options)
+    this.options = opts
+    var _this = this;
+    this.options.el.onchange = function(e) {
+      _this.fileChange(e)
+    };
+  }
+
+  MyUploader.prototype.upload = function upload(file) {
+    var url = this.options.url;
+    var extraParameter = this.options.extraParameter;
+    var _this = this;
+    var formData = new FormData();
+    formData.append('file', file, +new Date() + '.jpg'); // 需添加第三个参数filename
+    for (var k in extraParameter) { // 添加额外的参数
+      formData.append(k, extraParameter[k])
+    }
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', url, true);
+    xhr.withCredentials = true;
+    xhr.onreadystatechange = function() {
+      if (this.status == 200) {
+        if (this.readyState == 4) {
+          _this.options.successHandler(JSON.parse(xhr.responseText))
+        }
+      } else {
+        _this.options.errorHandler(xhr.responseText)
+      }
+    };
+    xhr.send(formData);
+  }
+  MyUploader.prototype.fileChange = function fileChange(e) {
+    var maxWidth = this.options.maxWidth;
+    var maxHeight = this.options.maxHeight;
+    var url = this.options.url;
+    var extraParameter = this.options.extraParameter;
+    var _this = this;
 
     var file = e.target.files[0]; // IE10+
-    console.log('压缩前', file)
     readerImg(file, function(img) {
       console.log(img.width, img.height);
       // 缩放图片需要的canvas
@@ -108,55 +152,10 @@
       context.drawImage(img, 0, 0, targetWidth, targetHeight);
       // canvas转为blob并上传
       canvas.toBlob(function(blob) {
-        console.log('压缩后', blob)
-        upload(url, blob, extraParameter)
+        _this.options.selectHandler.call(_this, blob);
       }, file.type || 'image/jpeg');
     });
   };
-
-  function upload(url, file, extraParameter) {
-    var formData = new FormData();
-    formData.append('file', file, +new Date() + '.jpg'); // 需添加第三个参数filename
-    for (var k in extraParameter) { // 添加额外的参数
-      formData.append(k, extraParameter[k])
-    }
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', url, true);
-    xhr.withCredentials = true;
-    xhr.onreadystatechange = function() {
-      if (this.status == 200) {
-        if (this.readyState == 4) {
-          console.log(JSON.parse(xhr.responseText))
-        }
-      } else {
-
-      }
-    };
-    xhr.send(formData);
-  }
-
-  function MyUploader(options) {
-    if (!(this instanceof MyUploader)) {
-      return new MyUploader(options);
-    }
-    var defaults = {
-      url: '', // 上传url
-      maxWidth: 400, // 最大尺寸限制
-      maxHeight: 400, // 最大尺寸限制
-      extraParameter: {} //额外的参数
-    }
-    var opts = merge({}, defaults, options)
-    this.options = opts
-    var _this = this;
-    this.options.el.onchange = function(e) {
-      fileChange(e, {
-        maxWidth: _this.options.maxWidth,
-        maxHeight: _this.options.maxHeight,
-        url: _this.options.url,
-        extraParameter: _this.options.extraParameter
-      })
-    };
-  }
 
   window.MyUploader = MyUploader;
 })();
@@ -174,7 +173,14 @@ $.post('/api/v1/admin/login', {
 
 MyUploader({
   el: document.getElementById('file'),
-  url: '/api/v1/admin/common/file/upload'
+  url: '/api/v1/admin/common/file/upload',
+  selectHandler: function(blob) {
+    console.log(this)
+    this.upload(blob)
+  },
+  successHandler: function(res) {
+    console.log(res)
+  }
 })
 </script>
 
