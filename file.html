@@ -12,6 +12,7 @@
 <body>
   <form id="form">
     <input type="file" id="file" />
+    <button type="button" id="btn">上传</button>
   </form>
 </body>
 <script>
@@ -77,6 +78,7 @@
       maxWidth: 400, // 最大尺寸限制
       maxHeight: 400, // 最大尺寸限制
       extraParameter: {}, //额外的参数
+      blob: null,
       successHandler: function() {},
       errorHandler: function() {},
       selectHandler: function(blob) {}
@@ -89,12 +91,13 @@
     };
   }
 
-  MyUploader.prototype.upload = function upload(file) {
+  MyUploader.prototype.upload = function upload() {
     var url = this.options.url;
     var extraParameter = this.options.extraParameter;
+    var blob = this.options.blob;
     var _this = this;
     var formData = new FormData();
-    formData.append('file', file, +new Date() + '.jpg'); // 需添加第三个参数filename
+    formData.append('file', blob, +new Date() + '.jpg'); // 需添加第三个参数filename
     for (var k in extraParameter) { // 添加额外的参数
       formData.append(k, extraParameter[k])
     }
@@ -152,6 +155,7 @@
       context.drawImage(img, 0, 0, targetWidth, targetHeight);
       // canvas转为blob并上传
       canvas.toBlob(function(blob) {
+        _this.options.blob = blob;
         _this.options.selectHandler.call(_this, blob);
       }, file.type || 'image/jpeg');
     });
@@ -171,17 +175,21 @@ $.post('/api/v1/admin/login', {
 })
 
 
-MyUploader({
+var myUploader = MyUploader({
   el: document.getElementById('file'),
   url: '/api/v1/admin/common/file/upload',
   selectHandler: function(blob) {
-    console.log(this)
-    this.upload(blob)
+    console.log(blob)
+    // this.upload()
   },
   successHandler: function(res) {
     console.log(res)
   }
 })
+
+document.getElementById('btn').onclick = function(e) {
+  myUploader.upload()
+}
 </script>
 
 </html>
