@@ -6,6 +6,7 @@
   <title>album</title>
   <link href="https://cdn.bootcss.com/cropper/3.1.3/cropper.min.css" rel="stylesheet">
   <link rel="stylesheet" href="cropper/cropper-config.css">
+  <link rel="stylesheet" href="album-dialog.css">
   <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
   <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -14,98 +15,12 @@
   <script src="cropper/cropper.min.js"></script>
   <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script src="cropper/cropper-config.js"></script>
-  <style>
-  /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
-  
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-    background-color: #f5f5f5;
-  }
-  /*定义滚动条轨道 内阴影+圆角*/
-  
-  ::-webkit-scrollbar-track {
-    /*-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); */
-    border-radius: 8px;
-    background-color: #fff;
-  }
-  /*定义滑块 内阴影+圆角*/
-  
-  ::-webkit-scrollbar-thumb {
-    border-radius: 5px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
-    background-color: #f5f5f5;
-  }
-  
-  #albumDialog .list-group {
-    border-radius: 0;
-    overflow: auto;
-    margin: 0;
-    height: 560px;
-  }
-  
-  #albumDialog .list-group label.item {
-    display: block;
-    margin: 0;
-  }
-  
-  #albumDialog [type="radio"]:checked ~ .list-group-item {
-    background-color: #337ab7;
-    color: #fff;
-  }
-  
-  #albumDialog .list-group-item {
-    border-radius: 0;
-    border: none;
-    border-bottom: 1px solid #ddd;
-    margin: 0;
-    cursor: pointer;
-    font-weight: normal;
-  }
-  
-  #albumDialog .album-wrap {
-    height: 480px;
-    overflow: auto;
-  }
-  
-  #albumDialog .album-wrap label.item {
-    float: left;
-    padding-left: 15px;
-    padding-bottom: 15px;
-    margin: 0;
-  }
-  
-  #albumDialog .album-wrap [type="checkbox"] ~ .img {
-    position: relative;
-    cursor: pointer;
-  }
-  
-  #albumDialog .album-wrap [type="checkbox"] ~ .img:before {
-    content: "\f00c";
-    display: inline-block;
-    font: normal normal normal 14px/1 FontAwesome;
-    position: absolute;
-    font-size: 26px;
-    color: #fff;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;
-    text-align: center;
-    line-height: 100px;
-    background: rgba(100, 100, 100, .5);
-    opacity: 0;
-    transition: all 0.3s ease-out;
-  }
-  
-  #albumDialog .album-wrap [type="checkbox"]:checked ~ .img:before {
-    opacity: 1;
-  }
-  </style>
 </head>
 
 <body>
+  <div class="container">
+    <button class="btn btn-success" id="btn">open</button>
+  </div>
   <!-- 相册模态框（Modal） -->
   <div class="modal fade" id="albumDialog">
     <div class="modal-dialog">
@@ -115,9 +30,9 @@
           <h4 class="modal-title" id="myModalLabel" style="font-size: 14px;">
             <span>选择图片</span>&nbsp;&nbsp;&nbsp;
             <a href="javascript:;" class="album-add">新建相册</a>&nbsp;&nbsp;&nbsp;
-            <label for="upload" style="color:#337ab7;cursor:pointer;font-weight: normal;">
+            <label for="upload9527" style="color:#337ab7;cursor:pointer;font-weight: normal;">
               <span>上传至相册</span>
-              <input type="file" id="upload" class="sr-only">
+              <input type="file" id="upload9527" class="sr-only upload-btn">
             </label>
           </h4>
         </div>
@@ -257,6 +172,7 @@
     </div>
     <!-- /.modal -->
   </div>
+  <script src="album-dialog.js"></script>
   <script>
   $.fn.serializeObject = function() {
     var o = {};
@@ -273,35 +189,6 @@
     });
     return o;
   }
-
-  // $('[name="type"]').serializeObject();
-  // $("input:radio[name=type]").eq(0).attr("checked",true)
-
-  $('#albumDialog').modal('show');
-
-  $('.album-add').click(function() {
-    addDialogOpen();
-  })
-
-  function addDialogOpen() {
-    var msg = '<form><input type="text" class="form-control" placeholder="请输入相册名称"></form>'
-    bootbox.dialog({
-      title: '添加相册',
-      message: msg,
-      size: 'small',
-      closeButton: true,
-      buttons: {
-        ok: {
-          label: "确定",
-          className: 'btn-primary',
-          callback: function() {
-            console.log('do something')
-            return false;
-          }
-        }
-      }
-    });
-  }
   </script>
   <script>
   $.post('/api/v1/admin/login', {
@@ -313,15 +200,9 @@
     console.log(res)
   })
 
-  var a = $.cropperInit($('#upload'), {
-    url: '/api/v1/admin/common/file/upload',
-    uploadSuccess: function(res, base64) {
-      //上传成功回调
-      console.log('1', res);
-    }
-  });
-
-
+  $('#btn').click(function() {
+    albumObject.dialogOpen();
+  })
   </script>
 </body>
 
