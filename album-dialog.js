@@ -2,6 +2,7 @@
   var $albumDialog = $('#albumDialog');
   var $albumAddBtn = $albumDialog.find('.album-add');
   var $uploadBtn = $albumDialog.find('.upload-btn');
+  var $albumImgWrap = $albumDialog.find('.album-img-wrap')
 
   var albumObject = {
     init: function() { // 初始化操作
@@ -21,6 +22,17 @@
       } else {
         alert('请引入截图相关文件');
       }
+
+      $albumDialog.on('change', ':radio', function() {
+        var arr = [{
+          value: 1
+        }, {
+          value: 2
+        }, {
+          value: 3
+        }]
+        _this.renderTemplate(arr)
+      })
     },
     dialogOpen: function() {
       $albumDialog.modal('show');
@@ -45,6 +57,20 @@
           }
         }
       });
+    },
+    createTemplate: function(arr) {
+      var list = [];
+      $.each(arr, function(i, item) {
+        list.push('<label class="item">\
+                  <input type="checkbox" name="img" value="' + item.value + '" class="hide">\
+                  <div class="img"><img src="test.jpg" width="100" height="100"></div>\
+                </label>');
+
+      })
+      return list.join('')
+    },
+    renderTemplate: function(arr) {
+      $albumImgWrap.html(this.createTemplate(arr));
     },
     albumAdd: function() {}
   }

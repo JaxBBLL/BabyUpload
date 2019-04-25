@@ -50,24 +50,24 @@
   font-weight: normal;
 }
 
-#albumDialog .album-wrap {
+#albumDialog .album-img-wrap {
   height: 480px;
   overflow: auto;
 }
 
-#albumDialog .album-wrap label.item {
+#albumDialog .album-img-wrap label.item {
   float: left;
   padding-left: 15px;
   padding-bottom: 15px;
   margin: 0;
 }
 
-#albumDialog .album-wrap [type="checkbox"] ~ .img {
+#albumDialog .album-img-wrap [type="checkbox"] ~ .img {
   position: relative;
   cursor: pointer;
 }
 
-#albumDialog .album-wrap [type="checkbox"] ~ .img:before {
+#albumDialog .album-img-wrap [type="checkbox"] ~ .img:before {
   content: "\f00c";
   display: inline-block;
   font: normal normal normal 14px/1 FontAwesome;
@@ -86,6 +86,6 @@
   transition: all 0.3s ease-out;
 }
 
-#albumDialog .album-wrap [type="checkbox"]:checked ~ .img:before {
+#albumDialog .album-img-wrap [type="checkbox"]:checked ~ .img:before {
   opacity: 1;
 }
