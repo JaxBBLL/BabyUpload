@@ -25,7 +25,7 @@
     dialogOpen: function() {
       $albumDialog.modal('show');
       $albumDialog.find(':checkbox').prop('checked', false); // 清空选中的图片
-      $albumDialog.find(":radio").eq(0).attr("checked", true); // 默认选中第一个相册
+      $albumDialog.find(":radio").eq(0).prop("checked", true); // 默认选中第一个相册
     },
     addDialogOpen: function() {
       var msg = '<form><input type="text" class="form-control" placeholder="请输入相册名称"></form>'
