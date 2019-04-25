@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>album</title>
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/bootbox.js/4.4.0/bootbox.min.js"></script>
+  <style>
+  /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+  
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background-color: #f5f5f5;
+  }
+  /*定义滚动条轨道 内阴影+圆角*/
+  
+  ::-webkit-scrollbar-track {
+    /*-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); */
+    border-radius: 8px;
+    background-color: #fff;
+  }
+  /*定义滑块 内阴影+圆角*/
+  
+  ::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+    background-color: #f5f5f5;
+  }
+  
+  #albumDialog .list-group {
+    border-radius: 0;
+    overflow: auto;
+    margin: 0;
+    height: 560px;
+  }
+  
+  #albumDialog .list-group label.item {
+    display: block;
+    margin: 0;
+  }
+  
+  #albumDialog [type="radio"]:checked ~ .list-group-item {
+    background-color: #337ab7;
+    color: #fff;
+  }
+  
+  #albumDialog .list-group-item {
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    margin: 0;
+    cursor: pointer;
+    font-weight: normal;
+  }
+  
+  #albumDialog .album-wrap {
+    height: 480px;
+    overflow: auto;
+  }
+  
+  #albumDialog .album-wrap label.item {
+    float: left;
+    padding-left: 15px;
+    padding-bottom: 15px;
+    margin: 0;
+  }
+  
+  #albumDialog .album-wrap [type="checkbox"] ~ .img {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  #albumDialog .album-wrap [type="checkbox"] ~ .img:before {
+    content: "\f00c";
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    position: absolute;
+    font-size: 26px;
+    color: #fff;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    text-align: center;
+    line-height: 100px;
+    background: rgba(100, 100, 100, .5);
+    opacity: 0;
+    transition: all 0.3s ease-out;
+  }
+  
+  #albumDialog .album-wrap [type="checkbox"]:checked ~ .img:before {
+    opacity: 1;
+  }
+  </style>
+</head>
+
+<body>
+  <!-- 相册模态框（Modal） -->
+  <div class="modal fade" id="albumDialog">
+    <div class="modal-dialog">
+      <div class="modal-content" style="width: 682px;">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="myModalLabel" style="font-size: 14px;">
+            <span>选择图片</span>&nbsp;&nbsp;&nbsp;
+            <a href="javascript:;" class="album-add">新建相册</a>&nbsp;&nbsp;&nbsp;
+            <a href="#">上传至相册</a>
+          </h4>
+        </div>
+        <div class="modal-body" style="padding: 0;">
+          <div class="clearfix">
+            <div class="list-group pull-left" style="width: 200px;">
+              <label class="item">
+                <input type="radio" name="type" class="hide" value="1">
+                <p class="list-group-item">默认相册</p>
+              </label>
+              <label class="item">
+                <input type="radio" name="type" class="hide" value="3">
+                <p class="list-group-item">相册1</p>
+              </label>
+              <label class="item">
+                <input type="radio" name="type" class="hide" value="5">
+                <p class="list-group-item">相册2</p>
+              </label>
+              <label class="item">
+                <input type="radio" name="type" class="hide" value="6">
+                <p class="list-group-item">相册3</p>
+              </label>
+            </div>
+            <div style="overflow: hidden;border-left: 1px solid #ddd;padding: 15px 0;">
+              <div class="album-wrap">
+                <label class="item">
+                  <input type="checkbox" name="img" value="1" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+                <label class="item">
+                  <input type="checkbox" name="img" value="2" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+                <label class="item">
+                  <input type="checkbox" name="img" value="3" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+                <label class="item">
+                  <input type="checkbox" name="img" value="4" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+                <label class="item">
+                  <input type="checkbox" name="img" value="4" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+                <label class="item">
+                  <input type="checkbox" name="img" value="4" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+                <label class="item">
+                  <input type="checkbox" name="img" value="4" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+                <label class="item">
+                  <input type="checkbox" name="img" value="4" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+                <label class="item">
+                  <input type="checkbox" name="img" value="4" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+                <label class="item">
+                  <input type="checkbox" name="img" value="4" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+                <label class="item">
+                  <input type="checkbox" name="img" value="4" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+                <label class="item">
+                  <input type="checkbox" name="img" value="4" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+                <label class="item">
+                  <input type="checkbox" name="img" value="4" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+                <label class="item">
+                  <input type="checkbox" name="img" value="4" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+                <label class="item">
+                  <input type="checkbox" name="img" value="4" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+                <label class="item">
+                  <input type="checkbox" name="img" value="4" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+                <label class="item">
+                  <input type="checkbox" name="img" value="4" class="hide">
+                  <div class="img">
+                    <img src="test.jpg" width="100" height="100">
+                  </div>
+                </label>
+              </div>
+              <div style="border-top: 1px solid #ddd;text-align: right;padding-top: 15px;padding-right: 15px;">
+                <button class="btn btn-primary">下一步</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+  </div>
+  <script>
+  $.fn.serializeObject = function() {
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function() {
+      if (o[this.name]) {
+        if (!o[this.name].push) {
+          o[this.name] = [o[this.name]];
+        }
+        o[this.name].push(this.value || '');
+      } else {
+        o[this.name] = this.value || '';
+      }
+    });
+    return o;
+  }
+
+  // $('[name="type"]').serializeObject();
+  // $("input:radio[name=type]").eq(0).attr("checked",true)
+
+  $('#albumDialog').modal('show');
+
+  $('.album-add').click(function() {
+    addDialogOpen();
+  })
+
+  function addDialogOpen() {
+    var msg = '<form><input type="text" class="form-control" placeholder="请输入相册名称"></form>'
+    bootbox.dialog({
+      title: '添加相册',
+      message: msg,
+      size: 'small',
+      closeButton: true,
+      buttons: {
+        ok: {
+          label: "确定",
+          className: 'btn-primary',
+          callback: function() {
+            console.log('do something')
+            return false;
+          }
+        }
+      }
+    });
+  }
+  </script>
+</body>
+
+</html>

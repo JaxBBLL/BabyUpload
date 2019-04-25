@@ -1,0 +1,50 @@
+.m-copper-wrap {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  background-color: rgba(25, 28, 34, 0.88);
+  text-align: center;
+  font-size: 0;
+  overflow: auto;
+  z-index: 3000;
+  white-space: nowrap;
+}
+
+.m-copper-wrap:after {
+  content: '';
+  display: inline-block;
+  width: 0;
+  height: 90%;
+  vertical-align: middle;
+}
+
+.m-copper-wrap .m-copper {
+  display: inline-block;
+  text-align: left;
+  border-radius: 4px;
+  background-color: #fff;
+  vertical-align: middle;
+  outline: 0;
+  position: relative;
+  font-size: 14px;
+  width: auto;
+  white-space: normal;
+}
+
+.m-copper-wrap .m-copper .body {
+  padding: 15px;
+  overflow: auto;
+  min-width: 300px;
+  max-width: 700px;
+  min-height: 60px;
+  max-height: 80vh;
+}
+
+.m-copper-wrap .m-copper .footer {
+  padding: 10px 15px;
+  text-align: right;
+}
