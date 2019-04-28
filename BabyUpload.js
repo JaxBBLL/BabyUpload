@@ -29,6 +29,15 @@
     return target;
   };
 
+  function insertAfter(el, newEl) {
+    var parentNode = el.parentNode;
+    if (el.nextSibling) { //将在原有的后面插入新创建的元素,原因是没有insetAfter
+      parentNode.insertBefore(newEl, el.nextSibling)
+    } else { // 当前元素是最后一个，直接在父元素追加
+      parentNode.appendChild(newEl)
+    }
+  }
+
   var noop = function() {};
 
   function Upload(options) {
@@ -62,7 +71,7 @@
 
     var eInput = document.createElement('input');
     eInput.setAttribute('type', 'file');
-    eInput.setAttribute('name', 'file');
+    eInput.setAttribute('name', el.name || '');
     if (this._opts.multiple) {
       eInput.setAttribute('multiple', 'multiple');
     }
@@ -70,7 +79,7 @@
       eInput.setAttribute('accept', this._opts.accept);
     }
     eInput.style.display = 'none'
-    document.body.appendChild(eInput)
+    insertAfter(el, eInput)
     el.addEventListener('click', function(ev) {
       eInput.value = ''; // 修复图片移除后，添加同张图片不成功的问题
       eInput.click();
