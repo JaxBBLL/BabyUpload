@@ -14,6 +14,22 @@
 }(this, function() {
   'use strict';
 
+  if (!HTMLCanvasElement.prototype.toBlob) { // 为IE方法
+    Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
+      value: function(callback, type, quality) {
+        var binStr = atob(this.toDataURL(type, quality).split(',')[1]),
+          len = binStr.length,
+          arr = new Uint8Array(len);
+        for (var i = 0; i < len; i++) {
+          arr[i] = binStr.charCodeAt(i);
+        }
+        callback(new Blob([arr], {
+          type: type || 'image/png'
+        }));
+      }
+    });
+  }
+
   function merge(target) {
     for (var i = 1, j = arguments.length; i < j; i++) {
       var source = arguments[i] || {};
@@ -38,6 +54,47 @@
     }
   }
 
+  function readerImg(file, callback) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = document.createElement("img");
+      // 将解析的base64字符串赋值给img标签
+      img.onload = function() {
+        callback(img);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function compress(image, options, cb) {
+    var maxWidth = options.maxWidth;
+    var maxHeight = options.maxHeight;
+    readerImg(image, function(image) {
+      // 缩放图片需要的canvas
+      var canvas = document.createElement('canvas');
+      var context = canvas.getContext("2d");
+      var ratio = parseFloat((image.width / image.height).toFixed(2))
+      var maxValue = ratio > 1 ? image.width : image.height;
+      if (ratio >= 1) { // 按照原图比例计算压缩后图的值
+        maxHeight = maxWidth / ratio;
+      } else {
+        maxWidth = maxHeight / ratio;
+      }
+      var width = Math.min(maxWidth, image.width)
+      var height = Math.min(maxHeight, image.height)
+      canvas.width = width; // 设置canvas的画布宽度为图片宽度 
+      canvas.height = height;
+      // 清除画布
+      context.clearRect(0, 0, width, height);
+      context.drawImage(image, 0, 0, width, height) // 在canvas上绘制图片 
+        // canvas转为blob
+      canvas.toBlob(function(blob) {
+        cb && cb(blob)
+      }, 'image/jpeg');
+    })
+  }
+
   var noop = function() {};
 
   function Upload(options) {
@@ -55,6 +112,7 @@
       method: 'POST', // ajax上传的类型
       accept: '', // 接受上传的文件类型
       withCredentials: false, // 支持发送 cookie 凭证信息
+      maxSize: 0, // 上图图片最大size, 0为不限制
       change: noop,
       beforeUpload: noop,
       success: noop, // http成功
@@ -92,6 +150,7 @@
       } else {
         _this.files = selectFiles
       }
+      var n = _this.files.length; // 记录总共选中了几张图片
       if (_this._opts.isCompress) {
         // 压缩begin
         var newFiles = []
@@ -100,19 +159,23 @@
             maxWidth: _this._opts.maxWidth,
             maxHeight: _this._opts.maxHeight
           }, function(newFile) {
-            console.log(newFile)
             newFiles.push(newFile)
+            n--;
+            if (n == 0) { // 所有图片都压缩完
+              _this.files = newFiles;
+              if (_this._opts.isChangeUpload) {
+                _this.upload();
+              }
+            }
           })
         }
-        _this.files = newFiles;
-        // 压缩end
-        console.log(_this.files)
+      } else {
+        if (_this._opts.isChangeUpload) {
+          _this.upload();
+        }
       }
-      // 压缩是异步的，这里立即上传可能有问题
       _this._opts.change(selectFiles, _this.files)
-      if (_this._opts.isChangeUpload) {
-        _this.upload();
-      }
+
     }, false)
   }
 
@@ -121,7 +184,6 @@
     if (!this.files.length) {
       return false;
     }
-
     var url = this._opts.url;
     var method = this._opts.method;
     var cb = this._opts.success;
@@ -132,7 +194,7 @@
       var file = this.files[i];
       (function(file) {
         var formData = new FormData();
-        formData.append(_this._opts.name, _this.files[i]);
+        formData.append(_this._opts.name, _this.files[i], +new Date() + '.jpg'); // 需添加第三个参数filename
         for (var k in _this._opts.data) {
           formData.append(k, _this._opts.data[k])
         }
@@ -173,37 +235,7 @@
     }
   }
 
-  function compress(file, options, cb) { // file获取选择的文件，这里是图片类型
-    var maxWidth = options.maxWidth;
-    var maxHeight = options.maxHeight;
-    var reader = new FileReader()
-    reader.readAsDataURL(file) //读取文件并将文件以URL的形式保存在resulr属性中 base64格式
-    reader.onload = function(e) { // 文件读取完成时触发 
-      var result = e.target.result // base64格式图片地址 
-      var image = new Image();
-      image.src = result // 设置image的地址为base64的地址 
-      image.onload = function() {
-        // 缩放图片需要的canvas
-        var canvas = document.createElement('canvas');
-        var context = canvas.getContext("2d");
-        var ratio = parseFloat((image.width / image.height).toFixed(2))
-        var maxValue = ratio > 1 ? image.width : image.height;
-        if (ratio >= 1) { // 按照原图比例计算压缩后图的值
-          maxHeight = maxWidth / ratio;
-        } else {
-          maxWidth = maxHeight / ratio;
-        }
-        var width = Math.min(maxWidth, image.width)
-        var height = Math.min(maxHeight, image.height)
-        canvas.width = width; // 设置canvas的画布宽度为图片宽度 
-        canvas.height = height;
-        context.drawImage(image, 0, 0, width, height) // 在canvas上绘制图片 
-        var dataUrl = canvas.toDataURL('image/jpeg', 0.1) // 0.92为压缩比，可根据需要设置，设置过小会影响图片质量
-        var oFile = dataURLtoFile(dataUrl, ~new Date() + '.jpg')
-        cb && cb(oFile)
-      }
-    }
-  }
+
 
   function dataURLtoFile(dataurl, filename) { //将base64转换为文件
     var arr = dataurl.split(','),
