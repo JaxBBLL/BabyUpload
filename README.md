@@ -36,13 +36,24 @@ options是一个对象，参数如下
   isCompress: false, //是否压缩
   method: 'POST', // ajax上传的类型
   accept: '', // 接受上传的文件类型
-  withCredentials: false, // 支持发送 cookie 凭证信息，默认false
-  success: function(res) {}, // http成功, res是个数组，返回多个上传的结果
-  error: function(err) {}, // http失败
-  // 选择文件的回调，selectFiles当前操作选中的文件，allfiles是所有选择的文件
-  change: function(selectFiles, allfiles) {}, 
-  beforeUpload: function(files) {} //发送之前的回调，files是所有选择的文件
+  withCredentials: false // 支持发送 cookie 凭证信息，默认false
 }
+```
+
+## 监听事件
+
+```js
+var instance = BabyUpload(options)
+
+instance.on('success', function(res) { // 监听上传成功事件, res是个数组，返回多个上传的结果
+  
+}).on('beforeUpload', function(files) { //  监听发送之前的事件，files是所有选择的文件
+  
+}).on('error', function(err) { // 监听上传失败事件
+  
+}).on('change', function(selectFiles, allfiles) { // 监听选择文件的事件，selectFiles当前操作选中的文件，allfiles是所有选择的文件
+  
+})
 ```
 ## 实例方法 - upload
 
@@ -53,9 +64,15 @@ var instance = BabyUpload({
   el: '#id',
   url: 'string',
   isChangeUpload: false,
-  name: 'file',
-  success: function(res) {}, // http成功
-  error: function(err) {}, // http失败
+  name: 'file'
+}).on('success', function(res) {
+  
+}).on('beforeUpload', function(files) {
+  
+}).on('error', function(err) {
+  
+}).on('change', function(selectFiles, allfiles) {
+  
 })
 
 $('#submit').click(function(ev) {
@@ -87,14 +104,19 @@ var upload1 = new BabyUpload({
   url: '/api/v1/admin/common/file/upload',
   accept: 'image/gif, image/jpeg, image/png',
   multiple: false,
-  success: function(res) {
-    console.log('success', res)
-  },
-  change: function(selectFiles, allfiles) {
-    var path = URL.createObjectURL(selectFiles[0]);
-    $('#upload1').attr('src', path)
-  },
-  beforeUpload: function(files) {}
+  isCompress: true, //是否压缩
+  maxWidth: 500, //isCompress:true才起作用
+  maxHeight: 500 //isCompress:true才起作用
+}).on('change', function(selectFiles, allfiles) {
+  console.log('change', selectFiles, allfiles)
+  var path = URL.createObjectURL(selectFiles[0]);
+  $('#upload1').attr('src', path)
+}).on('success', function(res) {
+  console.log('success', res)
+}).on('error', function(err) {
+
+}).on('beforeUpload', function() {
+  console.log('beforeUpload')
 })
 
 $('#submit1').click(function(ev) {

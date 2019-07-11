@@ -88,7 +88,7 @@
       // 清除画布
       context.clearRect(0, 0, width, height);
       context.drawImage(image, 0, 0, width, height) // 在canvas上绘制图片 
-        // canvas转为blob
+      // canvas转为blob
       canvas.toBlob(function(blob) {
         cb && cb(blob)
       }, 'image/jpeg');
@@ -112,11 +112,7 @@
       method: 'POST', // ajax上传的类型
       accept: '', // 接受上传的文件类型
       withCredentials: false, // 支持发送 cookie 凭证信息
-      maxSize: 0, // 上图图片最大size, 0为不限制
-      change: noop,
-      beforeUpload: noop,
-      success: noop, // http成功
-      error: noop // http失败
+      maxSize: 0 // 上图图片最大size, 0为不限制
     }
 
     var _opts = merge({}, defaults, options);
@@ -125,6 +121,7 @@
     var el = typeof _opts.el === 'string' ?
       document.querySelector(_opts.el) : _opts.el;
     this._opts = _opts;
+    this.eventMap = this.eventMap || {};
     this.files = [];
 
     var eInput = document.createElement('input');
@@ -174,13 +171,13 @@
           _this.upload();
         }
       }
-      _this._opts.change(selectFiles, _this.files)
+      _this.trigger('change', selectFiles, _this.files)
 
     }, false)
   }
 
   Upload.prototype.upload = function() {
-    this._opts.beforeUpload(this.files);
+    this.trigger('beforeUpload', this.files);
     if (!this.files.length) {
       return false;
     }
@@ -207,11 +204,11 @@
               size -= 1;
               resultArr.push(toJson(this.responseText))
               if (size === 0) {
-                cb && cb(resultArr)
+                _this.trigger('success', resultArr)
               }
             }
           } else {
-            ecb && ecb(toJson(this.responseText))
+            _this.trigger('error', toJson(this.responseText))
           }
         };
         xhr.send(formData);
@@ -225,6 +222,28 @@
     }
     index = index === undefined ? 0 : index;
     this.files.splice(index, 1);
+  }
+  Upload.prototype.on = function(evt, handler) {
+    var evts = evt.split(' ');
+    var isFunction = typeof(handler) === 'function';
+    for (var i = 0; i < evts.length; i++) {
+      this.eventMap[evts[i]] = this.eventMap[evts[i]] || [];
+      if (isFunction) {
+        this.eventMap[evts[i]].push(handler);
+      }
+    }
+    return this;
+  }
+
+  Upload.prototype.trigger = function(evt) {
+    var eventQueue = this.eventMap[evt];
+    if (!eventQueue) {
+      return;
+    }
+    var args = Array.prototype.slice.call(arguments, 1);
+    for (var i = 0; i < eventQueue.length; i++) {
+      eventQueue[i].apply(this.el, args)
+    }
   }
 
   function toJson(string) {

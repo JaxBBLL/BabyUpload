@@ -14,19 +14,19 @@
     height: 60px;
     margin-right: 10px;
   }
-  
+
   .pointer {
     cursor: pointer;
   }
-  
+
   .upload-wrap {
     padding: 10px 0;
   }
-  
+
   .upload-item {
     display: inline-block;
   }
-  
+
   .upload-item img {
     display: block;
   }
@@ -62,7 +62,7 @@
     </div>
   </div>
   <script>
-   $.post('/api/v1/admin/login', {
+  $.post('/api/v1/admin/login', {
     userName: 'zjadmin', //  zjadmin
     password: '123456', //  123456
     captcha: '12345',
@@ -70,7 +70,7 @@
   }, function(res) {
     console.log(res)
   })
-   
+
   var upload1 = new BabyUpload({
     el: '#upload1',
     url: '/api/v1/admin/common/file/upload',
@@ -78,15 +78,17 @@
     multiple: false,
     isCompress: true, //是否压缩
     maxWidth: 500, //isCompress:true才起作用
-    maxHeight: 500, //isCompress:true才起作用
-    success: function(res) {
-      console.log('success', res)
-    },
-    change: function(selectFiles, allfiles) {
-      var path = URL.createObjectURL(selectFiles[0]);
-      $('#upload1').attr('src', path)
-    },
-    beforeUpload: function(files) {}
+    maxHeight: 500 //isCompress:true才起作用
+  }).on('change', function(selectFiles, allfiles) {
+    console.log('change', selectFiles, allfiles)
+    var path = URL.createObjectURL(selectFiles[0]);
+    $('#upload1').attr('src', path)
+  }).on('success', function(res) {
+    console.log('success', res)
+  }).on('error', function(err) {
+
+  }).on('beforeUpload', function() {
+    console.log('beforeUpload')
   })
 
   $('#submit1').click(function(ev) {
@@ -104,19 +106,16 @@
     url: '/api/v1/admin/common/file/upload',
     accept: 'image/gif, image/jpeg, image/png',
     multiple: true,
-    isCompress: true, //是否压缩
-    success: function(res) {
-      console.log('success', res)
-    },
-    change: function(selectFiles, allfiles) {
-      var html = '';
-      allfiles.forEach(item => {
-        var path = URL.createObjectURL(item);
-        html += '<p class="upload-item"><img src="' + path + '" class="img-rounded img"><button class="btn btn-danger btn-xs removeBtn"><span class="glyphicon glyphicon-trash"></span></button></p>'
-      })
-      $('#multiple-wrap').html(html)
-    },
-    beforeUpload: function(files) {}
+    isCompress: true //是否压缩
+  }).on('change', function(selectFiles, allfiles) {
+    var html = '';
+    allfiles.forEach(item => {
+      var path = URL.createObjectURL(item);
+      html += '<p class="upload-item"><img src="' + path + '" class="img-rounded img"><button class="btn btn-danger btn-xs removeBtn"><span class="glyphicon glyphicon-trash"></span></button></p>'
+    })
+    $('#multiple-wrap').html(html)
+  }).on('success', function(res) {
+    console.log('success', res)
   })
 
   $('#submit2').click(function(ev) {
