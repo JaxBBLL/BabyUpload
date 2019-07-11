@@ -58,7 +58,6 @@
     var reader = new FileReader();
     reader.onload = function(e) {
       var img = document.createElement("img");
-      // 将解析的base64字符串赋值给img标签
       img.onload = function() {
         callback(img);
       };
@@ -75,7 +74,6 @@
       var canvas = document.createElement('canvas');
       var context = canvas.getContext("2d");
       var ratio = parseFloat((image.width / image.height).toFixed(2))
-      var maxValue = ratio > 1 ? image.width : image.height;
       if (ratio >= 1) { // 按照原图比例计算压缩后图的值
         maxHeight = maxWidth / ratio;
       } else {
@@ -111,8 +109,7 @@
       data: {}, // 额外的参数,
       method: 'POST', // ajax上传的类型
       accept: '', // 接受上传的文件类型
-      withCredentials: false, // 支持发送 cookie 凭证信息
-      maxSize: 0 // 上图图片最大size, 0为不限制
+      withCredentials: false // 支持发送 cookie 凭证信息
     }
 
     var _opts = merge({}, defaults, options);
