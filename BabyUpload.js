@@ -215,6 +215,7 @@
       }(file));
     }
     this.files = []
+    return this;
   }
   Upload.prototype.remove = function(index) {
     if (!this.files.length) {
@@ -222,6 +223,7 @@
     }
     index = index === undefined ? 0 : index;
     this.files.splice(index, 1);
+    return this;
   }
   Upload.prototype.on = function(evt, handler) {
     var evts = evt.split(' ');
@@ -244,6 +246,7 @@
     for (var i = 0; i < eventQueue.length; i++) {
       eventQueue[i].apply(this.el, args)
     }
+    return this;
   }
 
   function toJson(string) {

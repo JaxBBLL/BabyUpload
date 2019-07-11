@@ -5,7 +5,7 @@
 - [BabyUpload](#babyupload)
   - [预览](#%E9%A2%84%E8%A7%88)
   - [创建实例对象](#%E5%88%9B%E5%BB%BA%E5%AE%9E%E4%BE%8B%E5%AF%B9%E8%B1%A1)
-  - [监听事件](#%E7%9B%91%E5%90%AC%E4%BA%8B%E4%BB%B6)
+  - [实例方法 - on](#%E7%9B%91%E5%90%AC%E4%BA%8B%E4%BB%B6)
   - [实例方法 - upload](#%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95---upload)
   - [实例方法 - remove(index)](#%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95---removeindex)
   - [example](#example)
@@ -43,18 +43,25 @@ options是一个对象，参数如下
 }
 ```
 
-## 监听事件
+## 实例方法 - on
+
+on用来监听实例对象的事件，有`change`、`beforeUpload`、`success`、`error`四个事件
+
+- change(selectFiles, allfiles) 监听选择文件的事件，selectFiles当前操作选中的文件，allfiles是所有选择的文件
+- beforeUpload(files) 监听发送之前的事件，files是所有选择的文件
+- success(res) 监听上传成功事件, res是个数组，返回多个上传的结果
+- error(err) 监听发送之前的事件，files是所有选择的文件
 
 ```js
 var instance = BabyUpload(options)
 
-instance.on('success', function(res) { // 监听上传成功事件, res是个数组，返回多个上传的结果
+instance.on('change', function(selectFiles, allfiles) { 
   
-}).on('beforeUpload', function(files) { //  监听发送之前的事件，files是所有选择的文件
+}).on('beforeUpload', function(files) {
   
-}).on('error', function(err) { // 监听上传失败事件
+}).on('success', function(res) {
   
-}).on('change', function(selectFiles, allfiles) { // 监听选择文件的事件，selectFiles当前操作选中的文件，allfiles是所有选择的文件
+}).on('error', function(err) {
   
 })
 ```

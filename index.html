@@ -108,6 +108,7 @@
     multiple: true,
     isCompress: true //是否压缩
   }).on('change', function(selectFiles, allfiles) {
+    console.log('change', selectFiles, allfiles)
     var html = '';
     allfiles.forEach(item => {
       var path = URL.createObjectURL(item);
