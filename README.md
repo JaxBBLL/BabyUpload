@@ -1,8 +1,11 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [BabyUpload](#babyupload)
+  - [预览](#%E9%A2%84%E8%A7%88)
   - [创建实例对象](#%E5%88%9B%E5%BB%BA%E5%AE%9E%E4%BE%8B%E5%AF%B9%E8%B1%A1)
+  - [监听事件](#%E7%9B%91%E5%90%AC%E4%BA%8B%E4%BB%B6)
   - [实例方法 - upload](#%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95---upload)
   - [实例方法 - remove(index)](#%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95---removeindex)
   - [example](#example)
