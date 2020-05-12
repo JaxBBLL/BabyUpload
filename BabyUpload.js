@@ -47,7 +47,7 @@
 
   function insertAfter(el, newEl) {
     var parentNode = el.parentNode;
-    if (el.nextSibling) { //将在原有的后面插入新创建的元素,原因是没有insetAfter
+    if (el.nextSibling) { // 将在原有的后面插入新创建的元素,原因是没有insetAfter
       parentNode.insertBefore(newEl, el.nextSibling)
     } else { // 当前元素是最后一个，直接在父元素追加
       parentNode.appendChild(newEl)
@@ -102,9 +102,9 @@
     var defaults = {
       isChangeUpload: false, // 选择后是否立即上传
       name: 'file', // 上传的文件字段名,
-      isCompress: false, //是否压缩
-      maxWidth: 500, //isCompress:true才起作用
-      maxHeight: 500, //isCompress:true才起作用
+      isCompress: false, // 是否压缩
+      maxWidth: 500, // isCompress:true才起作用
+      maxHeight: 500, // isCompress:true才起作用
       multiple: false, // 是否多张
       data: {}, // 额外的参数,
       method: 'POST', // ajax上传的类型
@@ -123,7 +123,6 @@
 
     var eInput = document.createElement('input');
     eInput.setAttribute('type', 'file');
-    eInput.setAttribute('name', el.name || '');
     if (this._opts.multiple) {
       eInput.setAttribute('multiple', 'multiple');
     }
@@ -136,7 +135,6 @@
       eInput.value = ''; // 修复图片移除后，添加同张图片不成功的问题
       eInput.click();
     }, false)
-
     eInput.addEventListener('change', function(ev) {
       var selectFiles = Array.prototype.slice.call(this.files)
       if (_this._opts.multiple) {
